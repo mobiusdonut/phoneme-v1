@@ -1,68 +1,54 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+# Phoneme 🔊
+a redesigned version of the [IHS Voice website](ihsvoice.com) using React and Firebase!
+use as a template for your own news sites.
+created by [mobiusdonut](https://github.com/mobiusdonut). released under the [MIT License](https://opensource.org/licenses/MIT).
+## Setup
+Clone this repository, and download + extract the files.
+Create and set up a [Firebase](firebase.google.com/) project with Authentication, Cloud Firestore, Storage, and Hosting.
+Using the Firebase CLI, run `firebase login` and `firebase init` to initialize a new project in the directory. Select the new project when asked.
+Copy and paste the Firebase SDK snippet into `/src/firebase.js`. It should look like this (sensitive info replaced with ########).
+```
+const firebaseConfig = {
+  apiKey: "########",
+  authDomain: "ihsvoice-f70bd.firebaseapp.com",
+  databaseURL: "https://ihsvoice-f70bd.firebaseio.com",
+  projectId: "ihsvoice-f70bd",
+  storageBucket: "ihsvoice-f70bd.appspot.com",
+  messagingSenderId: "########",
+  appId: "########",
+  measurementId: "########"
+};
+```
+### Firebase
+In Cloud Firestore, create the following collections:
+```
+firestore
+└───articles
+└───drafts
+└───homepage-grid
+└───users
+```
+In Storage, create the following folders:
+```
+storage
+└───article-photos
+└───staff-profiles
+```
+In the users collection, add a document with the following info:
+```
+└───id (i set this to first initial + last name)
+│   │   bio (a short description about you)
+│   │   email (this is what you'll use to log in)
+│   │   id (again)
+│   │   image (a link to a photo of you hosted in the staff-profiles folder of storage)
+│   │   name (kimi no na wa)
+│   │   position (set this to Editor if you're admin, Staff-Writer otherwise)
+│   │   years (in the format 19-20, 20-21, etc.)
+```
+For both Cloud Firestore and Storage, set read permissions to true, and write permissions to with authentication.
+Go to Authentication and add a user using the email you provided. If you want to let more people publish articles, do the same thing but with different names, emails, etc.
+### React
+Modify the code in `src/App.js` and `src/index.css` however you want. If you're using this for your own site, remove the references to Irvington High and the IHS Voice (unless you want to give us free publicity).
+Run `npm install` to install Suneditor, React Router, and React Helmet.
+Run `npm build` to build the project, and `firebase deploy` to deploy it.
+Happy posting~
