@@ -1,4 +1,4 @@
-import React, {useState, createContext, useContext} from "react";
+import React, {useState, createContext, useContext, useEffect} from "react";
 import {BrowserRouter as Router, Switch, Route, Link, useParams, useLocation, useRouteMatch, useHistory} from "react-router-dom";
 import {Helmet} from 'react-helmet'
 import SunEditor from 'suneditor-react';
@@ -9,6 +9,7 @@ import ReactHtmlParser from 'react-html-parser';
 const auth = firebase.auth();
 const db = firebase.firestore();
 const storageRef = firebase.storage().ref();
+const target = React.createRef();
 const UserContext = createContext({
   userEmail: 'paused',
   userInfo: {name: ''},
@@ -42,9 +43,12 @@ export default function Page() {
         }}>
       <Router>
         <div>
+          <div id="top-bar">
+            <h6 id="topbarcategory">Uncategorized</h6>
+            <h5 id="topbartitle"></h5>
+          </div>
+          <ReadingProgress target={target} />
           <div id="topper">
-            <Link to="/"><img id="header" src="https://firebasestorage.googleapis.com/v0/b/ihsvoice-f70bd.appspot.com/o/voice.png?alt=media&token=a64989d2-35af-4a1c-95bd-b9baf39fe180" alt=""></img></Link>
-            <hr />
             <Navbar />
           </div>
 
@@ -150,6 +154,13 @@ function About() {
 function Navbar() {
   return (
     <div>
+      <Link to="/"><img id="header" src="https://firebasestorage.googleapis.com/v0/b/ihsvoice-f70bd.appspot.com/o/voice.png?alt=media&token=a64989d2-35af-4a1c-95bd-b9baf39fe180" alt=""></img></Link>
+      <ul id="smallnav">
+        <li><Link to="/about">about</Link></li>
+        <li><Link to="/staff">staff</Link></li>
+        <li><a href="https://issuu.com/ihsvoice/docs">print edition</a></li>
+      </ul>
+      <hr />
       <ul id="nav">
         <li><Link to="/category/news">NEWS</Link></li>
         <li><Link to="/category/student-life">STUDENT LIFE</Link></li>
@@ -201,7 +212,7 @@ function Category() {
     </div>
   );
 }
-
+//tags
 function Tag() {
   let {tag} = useParams();
   let page = parseInt(useQuery().get("page")) || 1;
@@ -239,8 +250,6 @@ function Tag() {
     </div>
   );
 }
-//tags
-
 //articles
 function Article() {
   let {article} = useParams();
@@ -281,7 +290,7 @@ function Article() {
         <title>{data.headline + " | The Irvington Voice"}</title>
         <meta name="description" content={data.content.replace(/<[^>]+>/g, '').substring(0, 290) + "..."} />
       </Helmet>
-      <div id="article" className={`${data["full-width"] ? "full-width" : "left classic"}`}>
+      <div ref={target} id="article" className={`${data["full-width"] ? "full-width" : "left classic"}`}>
         <ul className="categories">
           {data.categories.map((value, index) => {
             return <Link key={index} to={`/category/${value.replace(/ /g, "-")}`}><li key={index} className="categories">{value}</li></Link>
@@ -1493,3 +1502,46 @@ function Customize() {
     </div>
   );
 }
+//progress bar from https://nehalist.io/creating-a-reading-progress-bar-in-react/
+const ReadingProgress = ({ target }) => {
+  const [readingProgress, setReadingProgress] = useState(0);
+  const scrollListener = () => {
+    if (!target.current) {
+      return;
+    }
+
+    const element         = target.current;
+    const totalHeight     = element.clientHeight - (window.innerHeight);
+    const windowScrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+
+    if (windowScrollTop === 0) {
+      return setReadingProgress(0);
+    }
+
+    if (windowScrollTop > totalHeight) {
+      return setReadingProgress(100);
+    }
+
+    setReadingProgress((windowScrollTop / totalHeight) * 100);
+    if (window.pageYOffset > 200) {
+      document.getElementById("reading-progress-bar").style.top = "50px";
+      document.getElementById("top-bar").style.display = "block";
+      document.getElementById("topbartitle").innerHTML = document.getElementsByClassName("headline")[0].innerHTML;
+      if (document.getElementsByClassName("categories")[0].innerText) {
+        document.getElementById("topbarcategory").innerHTML = document.getElementsByClassName("categories")[0].innerText;
+      }
+    } else {
+      document.getElementById("reading-progress-bar").style.top = "-50px";
+      document.getElementById("top-bar").style.display = "none";
+    }
+  };
+  
+  useEffect(() => {
+    window.addEventListener("scroll", scrollListener);
+    return () => window.removeEventListener("scroll", scrollListener);
+  });
+
+  return(
+    <div id={`reading-progress-bar`} style={{width: `${readingProgress}%`}} />
+  );
+};
