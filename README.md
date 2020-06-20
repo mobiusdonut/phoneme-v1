@@ -2,6 +2,9 @@
 a redesigned version of the [IHS Voice website](ihsvoice.com) using React and Firebase!
 use as a template for your own news sites.
 created by [mobiusdonut](https://github.com/mobiusdonut). released under the [MIT License](https://opensource.org/licenses/MIT).
+
+This repository is now outdated! I switched from a serverless implementation using React to one using server-side rendering to make it easier to implement social media meta tags and to allow for web crawlers to navigate the site. All the code contained here is still functional; just outmoded. Access the new repository [here](https://github.com/mobiusdonut/phoneme).
+
 ## Setup
 Clone this repository, and download + extract the files.
 Create and set up a [Firebase](firebase.google.com/) project with Authentication, Cloud Firestore, Storage, and Hosting.
